@@ -49,7 +49,7 @@ export default async function todoListPage() {
             <div>
               <p className="font-bold">{task.title}</p>
               <p>{task.description}</p>
-              <p>状態: {statusLabels[task.status] || "不明"}</p>
+              <p>ステータス: {statusLabels[task.status] || "不明"}</p>
               <p className="mt-1 text-sm text-gray-500">
                 期限:{" "}
                 {task.deadline
@@ -57,7 +57,15 @@ export default async function todoListPage() {
                   : "未設定"}
               </p>
             </div>
-            <DeleteButton id={task.id} />
+            <div className="flex gap-2">
+              <a
+                href={`/todos/${task.id}/edit`}
+                className="flex items-center justify-center  px-2 py-1 bg-blue-500 text-white rounded hover:opacity-80"
+              >
+                編集
+              </a>
+              <DeleteButton id={task.id} />
+            </div>
           </li>
         ))}
       </ul>

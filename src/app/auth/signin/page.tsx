@@ -43,14 +43,14 @@ export default function SignInPage() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="メールアドレス"
-        className="border p-2"
+        className="border p-2 rounded"
       />
       <input
         type="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         placeholder="パスワード"
-        className="border p-2"
+        className="border p-2 rounded"
       />
       <button
         type="submit"

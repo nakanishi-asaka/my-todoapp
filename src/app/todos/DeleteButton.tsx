@@ -20,7 +20,7 @@ export function DeleteButton({ id }: { id: string }) {
   return (
     <button
       onClick={handleDelete}
-      className="bg-red-500 text-white px-2 py-1 rounded hover:opacity-80 cursor-pointer"
+      className="flex items-center justify-center  bg-red-500 text-white px-2 py-1 rounded hover:opacity-80 cursor-pointer"
     >
       削除
     </button>
