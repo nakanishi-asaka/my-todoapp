@@ -1,43 +1,32 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-// サーバー側の Supabase クライアント
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY! // service_role はサーバー専用
-);
-
-console.log(
-  "SUPABASE_SERVICE_ROLE_KEY exists:",
-  !!process.env.SUPABASE_SERVICE_ROLE_KEY
-);
-console.log(
-  "Service key length:",
-  process.env.SUPABASE_SERVICE_ROLE_KEY?.length
-);
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const { title, description, status, deadline, user_id } = body;
+    // Supabase クライアントを作成
+    const supabase = createRouteHandlerClient({ cookies });
 
-    // バリデーション: タイトルは必須
-    if (!title || title.length === 0) {
+    // サーバー側でログインユーザーを取得
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+    console.log("user:", user, "userError:", userError);
+
+    if (!user) {
+      return NextResponse.json({ error: "未ログインです" }, { status: 401 });
+    }
+
+    const { title, description, status, deadline } = await req.json();
+
+    if (!title || title.length > 50) {
       return NextResponse.json(
-        { error: "タイトルは必須です" },
+        { error: "タイトルは必須かつ50文字以内です" },
         { status: 400 }
       );
     }
 
-    // バリデーション: 文字数制限
-    if (title.length > 50) {
-      return NextResponse.json(
-        { error: "タイトルは50文字以内で入力してください" },
-        { status: 400 }
-      );
-    }
-
-    // バリデーション: 説明は任意だが、ある場合は100文字以内
     if (description && description.length > 100) {
       return NextResponse.json(
         { error: "説明は100文字以内で入力してください" },
@@ -45,12 +34,11 @@ export async function POST(req: Request) {
       );
     }
 
-    // DB にタスクを挿入
+    // DBに挿入
     const { data, error } = await supabase
       .from("task")
-      .insert([{ title, description, status, deadline, user_id }]);
+      .insert([{ title, description, status, deadline, user_id: user.id }]);
 
-    //insert時のエラーハンドリング
     if (error) {
       console.error("DB insert error:", error);
       return NextResponse.json({ error }, { status: 500 });

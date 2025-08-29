@@ -1,23 +1,37 @@
-import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY! // サーバー用
-);
+import { cookies } from "next/headers";
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 
 export async function POST(
   req: Request,
   { params }: { params: { id: string } }
 ) {
-  const { id } = params;
+  const supabase = createRouteHandlerClient({ cookies });
 
-  const { error } = await supabase.from("task").delete().eq("id", id);
+  // 認証ユーザー取得
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // 認証チェック
+  if (!user) {
+    return new Response(JSON.stringify({ error: "Not authenticated" }), {
+      status: 401,
+    });
+  }
+
+  // タスク削除
+  const { error } = await supabase
+    .from("task")
+    .delete()
+    .eq("id", params.id)
+    .eq("user_id", user.id);
 
   if (error) {
     console.error("削除エラー:", error);
-    return NextResponse.json({ error }, { status: 500 });
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+    });
   }
 
-  return NextResponse.redirect(new URL("/todos", req.url));
+  return new Response(JSON.stringify({ success: true }), { status: 200 });
 }

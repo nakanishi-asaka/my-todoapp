@@ -16,8 +16,11 @@ datasource db {
   status      String
   deadline    DateTime
   user_id     String  @db.Uuid
+  user        User     @relation(fields: [user_id], references: [id])
+
 
   @@map("task") // テーブル名を小文字にマッピング
+  @@index([user_id])
   }      
 
   

@@ -1,17 +1,25 @@
-import { createClient } from "@supabase/supabase-js";
 import { DeleteButton } from "./DeleteButton";
+import { cookies } from "next/headers";
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
+
+console.log("URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
+console.log("KEY:", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.slice(0, 5)); // 先頭だけ表示
 
 export default async function todoListPage() {
   // サーバー側の Supabase クライアント
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY! // サーバーなら service_role 使える
-  );
+  const supabase = createRouteHandlerClient({ cookies });
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return <p>ログインしてください</p>;
 
   // DB からタスク取得
   const { data: tasks, error } = await supabase
     .from("task")
     .select("*")
+    .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -53,7 +61,7 @@ export default async function todoListPage() {
               <p className="mt-1 text-sm text-gray-500">
                 期限:{" "}
                 {task.deadline
-                  ? new Date(task.deadline).toLocaleDateString().split("ja-JP")
+                  ? new Date(task.deadline).toLocaleDateString("ja-JP")
                   : "未設定"}
               </p>
             </div>

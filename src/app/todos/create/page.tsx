@@ -1,11 +1,8 @@
-//todoを作成するページ
-
 "use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-//todoを入力→作成ボタン→保存して一覧にもどる
 export default function TaskCreatePage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -21,12 +18,8 @@ export default function TaskCreatePage() {
     const res = await fetch("/api/tasks", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title,
-        description,
-        status,
-        deadline,
-      }),
+      body: JSON.stringify({ title, description, status, deadline }),
+      credentials: "include", // これ重要！
     });
 
     if (res.ok) {
@@ -64,18 +57,20 @@ export default function TaskCreatePage() {
       <select
         value={status}
         onChange={(e) => setStatus(e.target.value)}
-        className="border p-2 block w-full  rounded"
+        className="border p-2 block w-full rounded"
       >
         <option value="todo">未着手</option>
         <option value="doing">進行中</option>
         <option value="done">完了</option>
       </select>
+
       <input
         type="date"
         value={deadline}
         onChange={(e) => setDeadline(e.target.value)}
         className="border p-2 block w-full rounded"
       />
+
       <button
         type="submit"
         className="bg-blue-500 text-white my-2 px-4 py-2 rounded hover:opacity-80 cursor-pointer"
