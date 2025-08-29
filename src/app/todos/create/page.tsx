@@ -32,7 +32,7 @@ export default function TaskCreatePage() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 max-w-md mx-auto">
+    <form onSubmit={handleSubmit} className="p-4 max-w-md mx-auto space-y-4">
       {error && <p className="text-red-500 mb-2">{error}</p>}
 
       <input
@@ -75,7 +75,7 @@ export default function TaskCreatePage() {
         type="submit"
         className="bg-blue-500 text-white my-2 px-4 py-2 rounded hover:opacity-80 cursor-pointer"
       >
-        保存
+        作成
       </button>
     </form>
   );

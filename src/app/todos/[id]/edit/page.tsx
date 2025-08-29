@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { supabase } from "@/app/lib/supabase";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export default function EditTodoPage() {
+  const supabase = createClientComponentClient();
   const router = useRouter();
   const params = useParams();
   const id = params.id as string;
@@ -14,16 +15,34 @@ export default function EditTodoPage() {
   const [status, setStatus] = useState("todo");
   const [deadline, setDeadline] = useState("");
   const [error, setError] = useState("");
+  const [userId, setUserId] = useState<string | null>(null);
 
   // 既にある値を取得してフォームにセット
   useEffect(() => {
     const fetchTask = async () => {
       try {
+        // ログインユーザー取得
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        console.log("現在のログインユーザー:", user?.id);
+
+        if (!user) {
+          setError("ログインしてください");
+          return;
+        }
+        setUserId(user.id);
+
+        // タスク取得
         const { data, error } = await supabase
           .from("task")
           .select("id,title,description,status,deadline")
-          .eq("id", id)
-          .single();
+          .eq("id", params.id)
+          .eq("user_id", user?.id)
+          .maybeSingle();
+
+        console.log("取得結果:", data, error);
 
         if (error) {
           setError("データ取得に失敗しました");
@@ -60,7 +79,8 @@ export default function EditTodoPage() {
           status,
           deadline,
         })
-        .eq("id", id);
+        .eq("id", id)
+        .eq("user_id", userId);
 
       if (error) {
         setError("更新に失敗しました");
@@ -86,7 +106,7 @@ export default function EditTodoPage() {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="タイトル"
-        className="border p-2 w-full"
+        className="border p-2 rounded w-full"
         maxLength={50}
       />
 
@@ -94,14 +114,14 @@ export default function EditTodoPage() {
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         placeholder="説明"
-        className="border p-2 w-full"
+        className="border p-2 rounded w-full"
         maxLength={100}
       />
 
       <select
         value={status}
         onChange={(e) => setStatus(e.target.value)}
-        className="border p-2 w-full"
+        className="border p-2 rounded w-full"
       >
         <option value="todo">未着手</option>
         <option value="doing">進行中</option>
@@ -112,14 +132,14 @@ export default function EditTodoPage() {
         type="date"
         value={deadline}
         onChange={(e) => setDeadline(e.target.value)}
-        className="border p-2 w-full"
+        className="border p-2 rounded w-full"
       />
 
       <button
         type="submit"
         className="bg-blue-500 text-white px-4 py-2 rounded hover:opacity-80"
       >
-        更新
+        保存
       </button>
     </form>
   );

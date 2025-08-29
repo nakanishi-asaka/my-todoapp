@@ -1,13 +1,9 @@
-import { DeleteButton } from "./DeleteButton";
-import { cookies } from "next/headers";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
-import LogoutButton from "./LogoutButton";
+import LogoutButton from "../LogoutButton";
+import { DeleteButton } from "../DeleteButton";
+import { cookies } from "next/headers";
 
-console.log("URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
-console.log("KEY:", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.slice(0, 5)); // 先頭だけ表示
-
-export default async function todoListPage() {
-  // サーバー側の Supabase クライアント
+export default async function todoListDetailPage() {
   const supabase = createRouteHandlerClient({ cookies });
 
   const {
@@ -42,24 +38,15 @@ export default async function todoListPage() {
   };
 
   return (
-    <div className="p-4 bg-slate-200 min-h-screen">
-      <h1 className="text-xl font-bold mb-4">Todo一覧</h1>
-
-      <a
-        href="/todos/create"
-        className="inline-block bg-green-500 text-white px-4 py-2 rounded mb-4 hover:opacity-80 cursor-pointer"
-      >
-        ＋ 新規作成
-      </a>
+    <div className="p-4">
+      <h1 className="text-xl font-bold mb-4">タスク詳細</h1>
 
       <ul className="space-y-2">
         {tasks?.map((task) => (
-          <li
-            key={task.id}
-            className="border p-2  flex rounded justify-between"
-          >
+          <li key={task.id} className="border p-2 flex rounded justify-between">
             <div>
-              <p className="font-bold text-lg">{task.title}</p>
+              <p className="font-bold">{task.title}</p>
+              <p>{task.description}</p>
               <p>ステータス: {statusLabels[task.status] || "不明"}</p>
               <p className="mt-1 text-sm text-gray-500">
                 期限:{" "}
@@ -70,10 +57,10 @@ export default async function todoListPage() {
             </div>
             <div className="flex gap-2">
               <a
-                href={`/todos/${task.id}`}
-                className="flex items-center justify-center  px-2 py-1 bg-sky-500 text-white rounded hover:opacity-80"
+                href={`/todos/${task.id}/edit`}
+                className="flex items-center justify-center  px-2 py-1 bg-blue-500 text-white rounded hover:opacity-80"
               >
-                詳細
+                編集
               </a>
               <DeleteButton id={task.id} />
             </div>
