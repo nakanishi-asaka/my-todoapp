@@ -26,6 +26,7 @@ export default function EditTodoPage() {
           data: { user },
         } = await supabase.auth.getUser();
 
+        // Debug: 現在のログインユーザーをコンソールに出力
         console.log("現在のログインユーザー:", user?.id);
 
         if (!user) {
@@ -42,6 +43,7 @@ export default function EditTodoPage() {
           .eq("user_id", user?.id)
           .maybeSingle();
 
+        // Debug: 取得結果をコンソールに出力
         console.log("取得結果:", data, error);
 
         if (error) {

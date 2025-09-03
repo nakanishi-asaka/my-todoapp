@@ -2,6 +2,7 @@ import { DeleteButton } from "./DeleteButton";
 import { cookies } from "next/headers";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import LogoutButton from "./LogoutButton";
+import Link from "next/link";
 
 console.log("URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
 console.log("KEY:", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.slice(0, 5)); // 先頭だけ表示
@@ -45,12 +46,12 @@ export default async function todoListPage() {
     <div className="p-4 bg-slate-200 min-h-screen">
       <h1 className="text-xl font-bold mb-4">Todo一覧</h1>
 
-      <a
+      <Link
         href="/todos/create"
         className="inline-block bg-green-500 text-white px-4 py-2 rounded mb-4 hover:opacity-80 cursor-pointer"
       >
         ＋ 新規作成
-      </a>
+      </Link>
 
       <ul className="space-y-2">
         {tasks?.map((task) => (

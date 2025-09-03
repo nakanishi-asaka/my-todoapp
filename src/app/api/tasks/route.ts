@@ -5,6 +5,8 @@ import { cookies } from "next/headers";
 export async function POST(req: Request) {
   try {
     // Supabase クライアントを作成
+    // API Route Handler 内で cookies を渡す→ユーザーのcookie(ログイン情報)がsupabaseに紐づく
+    // サーバーコンポーネントや API Route Handler 内で認証状態を管理できる
     const supabase = createRouteHandlerClient({ cookies });
 
     // サーバー側でログインユーザーを取得
@@ -12,6 +14,7 @@ export async function POST(req: Request) {
       data: { user },
       error: userError,
     } = await supabase.auth.getUser();
+
     console.log("user:", user, "userError:", userError);
 
     if (!user) {
