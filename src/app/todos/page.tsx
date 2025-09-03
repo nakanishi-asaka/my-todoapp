@@ -44,7 +44,7 @@ export default async function todoListPage() {
 
   return (
     <div className="p-4 bg-slate-200 min-h-screen">
-      <h1 className="text-xl font-bold mb-4">Todo一覧</h1>
+      <h1 className="text-xl font-bold text-gray-700 mb-4">Todo一覧</h1>
 
       <Link
         href="/todos/create"
@@ -53,11 +53,11 @@ export default async function todoListPage() {
         ＋ 新規作成
       </Link>
 
-      <ul className="space-y-2">
+      <ul className="space-y-3">
         {tasks?.map((task) => (
           <li
             key={task.id}
-            className="border p-2  flex rounded justify-between"
+            className="p-2 flex rounded justify-between bg-white"
           >
             <div>
               <p className="font-bold text-lg">{task.title}</p>

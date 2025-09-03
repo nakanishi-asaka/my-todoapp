@@ -98,51 +98,53 @@ export default function EditTodoPage() {
   };
 
   return (
-    <form onSubmit={handleUpdate} className="p-4 max-w-md mx-auto space-y-4">
-      <h1 className="text-xl font-bold">タスク編集</h1>
+    <div className="bg-slate-200 min-h-screen flex items-start justify-center p-4">
+      <form onSubmit={handleUpdate} className="p-4 max-w-md mx-auto space-y-4">
+        <h1 className="text-xl font-bold">タスク編集</h1>
 
-      {error && <p className="text-red-500">{error}</p>}
+        {error && <p className="text-red-500">{error}</p>}
 
-      <input
-        type="text"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="タイトル"
-        className="border p-2 rounded w-full"
-        maxLength={50}
-      />
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="タイトル"
+          className="p-2 w-full bg-white rounded"
+          maxLength={50}
+        />
 
-      <textarea
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        placeholder="説明"
-        className="border p-2 rounded w-full"
-        maxLength={100}
-      />
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="説明"
+          className="p-2 w-full bg-white rounded"
+          maxLength={100}
+        />
 
-      <select
-        value={status}
-        onChange={(e) => setStatus(e.target.value)}
-        className="border p-2 rounded w-full"
-      >
-        <option value="todo">未着手</option>
-        <option value="doing">進行中</option>
-        <option value="done">完了</option>
-      </select>
+        <select
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+          className="p-2 w-full bg-white rounded"
+        >
+          <option value="todo">未着手</option>
+          <option value="doing">進行中</option>
+          <option value="done">完了</option>
+        </select>
 
-      <input
-        type="date"
-        value={deadline}
-        onChange={(e) => setDeadline(e.target.value)}
-        className="border p-2 rounded w-full"
-      />
+        <input
+          type="date"
+          value={deadline}
+          onChange={(e) => setDeadline(e.target.value)}
+          className="p-2 w-full bg-white rounded"
+        />
 
-      <button
-        type="submit"
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:opacity-80"
-      >
-        保存
-      </button>
-    </form>
+        <button
+          type="submit"
+          className="bg-blue-500 text-white px-4 py-2 hover:opacity-80 rounded cursor-pointer"
+        >
+          保存
+        </button>
+      </form>
+    </div>
   );
 }
